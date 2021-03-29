@@ -1,0 +1,64 @@
+USE MASTER
+GO
+CREATE DATABASE SwimmingPool                    --имя БД
+ ON                                    --описание файла БД
+ (NAME='Swiming_Pool',                     --логическое имя файла БД
+  FILENAME='H:\university\3 семестр\Базы Данных\КР\Swimming_Pool.mdf',      --физическое имя файла БД
+  SIZE=2,                              --первоначальный размер в МБ
+  MAXSIZE=10,                          --максимальный размер в МБ
+  FILEGROWTH=2)                        --шаг для автоматического увеличения файла в МБ
+ LOG ON                                --описание файла БД
+ (NAME='SP_Log',                      --логическое имя журнала транзакций
+  FILENAME='H:\university\3 семестр\Базы Данных\КР\Swimming_Pool_Log.mdf',       --физическое имя файла БД
+  SIZE=2,                              --первоначальный размер в МБ
+  MAXSIZE=10,                          --максимальный размер в МБ
+  FILEGROWTH=2)                         --шаг для автоматического увеличения файла в МБ
+ 
+ GO
+
+ use SwimmingPool
+
+  CREATE TABLE [Тип Абонемента]
+  ([Код абонемента] int PRIMARY KEY,
+  Название nvarchar(100) UNIQUE,
+  Описание nvarchar(100),
+  Стоимость smallmoney NOT NULL,
+  [Срок действия] date NOT NULL)
+  
+  GO 
+
+  use SwimmingPool
+   CREATE TABLE Клиенты
+  ([Код клиента] int PRIMARY KEY,
+  ФИО nvarchar(100) NOT NULL,
+  [Дата рождения] date, -- ТУТ ДОЛЖЕН БЫТЬ CHECK
+  Адрес nvarchar (100),
+  Телефон nvarchar (100) NOT NULL  )
+  
+  GO
+
+   use SwimmingPool
+   CREATE TABLE Договор
+  ([Номер договора] int PRIMARY KEY IDENTITY (1,1),
+  [Код клиента]int ,
+  [Код абонемента] int,
+  [Дата и время покупки] datetime NOT NULL, 
+  CONSTRAINT ДОГОВОР_ТИПАБОНЕМЕНТА_FK
+  FOREIGN KEY ([Код клиента]) REFERENCES [Клиенты]([Код клиента]),
+  CONSTRAINT ДОГОВОР_КЛИЕНТЫ_FK
+  FOREIGN KEY ([Код клиента]) REFERENCES [Клиенты]([Код клиента]),
+  )
+  GO
+
+   use SwimmingPool
+  CREATE TABLE Тренировки
+  ([Код клиента]int,
+  [Дата и время] datetime,
+  Стоимость smallmoney NOT NULL,
+  [ФИО инструктора] nvarchar(100),
+  CONSTRAINT ТРЕНИРОВКИ_КЛИЕНТЫ_FK
+  FOREIGN KEY ([Код клиента]) REFERENCES [Клиенты]([Код клиента]),
+  CONSTRAINT ДАТА_ФИО_UNIQUE
+  UNIQUE ([Дата и время], [ФИО инструктора]))
+
+  GO
